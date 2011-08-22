@@ -22,12 +22,12 @@ window.requestAnimFrame = ( function()
 ( function()
 {
     
-    var element   = document.getElementById( 'trackwave' ),
-        context   = element.getContext( '2d' ),
-        elHeight  = element.height,
-        elWidth   = element.width,
-        cursorPos = round( elWidth / 2 ),
-        current   = 0;
+    var TW = window.TrackWave = function( canvas )
+    {
+        this.canvas  = canvas;
+        this.context = canvas.getContext( '2d' );
+        this.current = 0;
+    }
     
     var data = ( function()
     {
@@ -48,36 +48,39 @@ window.requestAnimFrame = ( function()
      * - http://jsperf.com/math-round-vs-hack/3
      * - http://jsperf.com/math-round-vs-bitwise-round-func
      */
-    function round( number )
+    TW.round = function( number )
     {
         return ( 0.5 + number ) << 0;
+    };
+    
+    TW.prototype.draw = function()
+    {
+        this.context.fillStyle = '#323031';
+        this.context.fillRect( 0, 0, this.canvas.width, this.canvas.height );
+        
+        this.drawWave();
+        this.drawCursor();
+        
+        this.current++;
+        
+        window.requestAnimFrame( this.draw.bind( this ), this.canvas );
     }
     
-    function draw()
+    TW.prototype.drawCursor = function()
     {
-        context.fillStyle = '#323031';
-        context.fillRect( 0, 0, elWidth, elHeight );
-        
-        drawWave();
-        drawCursor();
-        
-        current++;
-        
-        window.requestAnimFrame( draw, element );
+        this.context.fillStyle = '#F73F00';
+        this.context.fillRect( this.canvas.width / 2, 0, 2, this.canvas.height );
     }
     
-    function drawCursor()
+    TW.prototype.drawWave = function()
     {
-        context.fillStyle = '#F73F00';
-        context.fillRect( elWidth / 2, 0, 2, elHeight );
-    }
-    
-    function drawWave()
-    {
-        var index  = current % ( data.length - cursorPos ),
+        var elHeight  = this.canvas.height,
+            elWidth   = this.canvas.width,
+            cursorPos = TW.round( elWidth / 2 ),
+            index     = this.current % ( data.length - cursorPos ),
             start, end, i;
         
-        context.fillStyle = '#E2C400';
+        this.context.fillStyle = '#E2C400';
         
         if( index < cursorPos )
         {
@@ -85,7 +88,7 @@ window.requestAnimFrame = ( function()
             
             for( i = 0; i < end; i++ )
             {
-                context.fillRect( i, round( elHeight / 2 ), 1, 1 );
+                this.context.fillRect( i, TW.round( elHeight / 2 ), 1, 1 );
             }
         }
         
@@ -94,19 +97,15 @@ window.requestAnimFrame = ( function()
         
         for( i = start; i < end; i++ )
         {
-            var lineHeight = round( elHeight * data[ i ] );
+            var lineHeight = TW.round( elHeight * data[ i ] );
             
-            context.fillRect( ( cursorPos - index ) + i, round( ( elHeight - lineHeight ) / 2 ), 1, lineHeight );
+            this.context.fillRect(
+                ( cursorPos - index ) + i,
+                TW.round( ( elHeight - lineHeight ) / 2 ),
+                1,
+                lineHeight
+            );
         }
     }
-    
-    document.addEventListener(
-        'DOMContentLoaded',
-        function()
-        {
-            draw();
-        },
-        false
-    );
     
 } )();
