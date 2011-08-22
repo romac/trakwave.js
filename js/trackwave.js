@@ -24,6 +24,9 @@ window.requestAnimFrame = ( function()
     
     var element   = document.getElementById( 'trackwave' ),
         context   = element.getContext( '2d' ),
+        elHeight  = element.height,
+        elWidth   = element.width,
+        cursorPos = round( elWidth / 2 ),
         current   = 0;
     
     var data = ( function()
@@ -39,10 +42,12 @@ window.requestAnimFrame = ( function()
         
     } )();
     
-    // See:
-    // - http://www.html5rocks.com/en/tutorials/canvas/performance/
-    // - http://jsperf.com/math-round-vs-hack/3
-    // - http://jsperf.com/math-round-vs-bitwise-round-func
+    /*
+     * See:
+     * - http://www.html5rocks.com/en/tutorials/canvas/performance/
+     * - http://jsperf.com/math-round-vs-hack/3
+     * - http://jsperf.com/math-round-vs-bitwise-round-func
+     */
     function round( number )
     {
         return ( 0.5 + number ) << 0;
@@ -50,9 +55,8 @@ window.requestAnimFrame = ( function()
     
     function draw()
     {
-        context.clearRect( 0, 0, element.height, element.width );
         context.fillStyle = '#323031';
-        context.fillRect( 0, 0, element.width, element.height );
+        context.fillRect( 0, 0, elWidth, elHeight );
         
         drawWave();
         drawCursor();
@@ -65,35 +69,34 @@ window.requestAnimFrame = ( function()
     function drawCursor()
     {
         context.fillStyle = '#F73F00';
-        context.fillRect( element.width / 2, 0, 2, element.height );
+        context.fillRect( elWidth / 2, 0, 2, elHeight );
     }
     
     function drawWave()
     {
-        var offset = round( element.width / 2 ),
-            index  = current % ( data.length - offset ),
+        var index  = current % ( data.length - cursorPos ),
             start, end, i;
         
         context.fillStyle = '#E2C400';
         
-        if( index < offset )
+        if( index < cursorPos )
         {
-            end = offset - index;
+            end = cursorPos - index;
             
-            for( i = 0; i < ( offset - index ); i++ )
+            for( i = 0; i < end; i++ )
             {
-                context.fillRect( i, round( ( element.height - 1 ) / 2 ), 1, 1 );
+                context.fillRect( i, round( elHeight / 2 ), 1, 1 );
             }
         }
         
-        start  = index > offset ? index - offset : 0;
-        end    = index + offset;
+        start  = index > cursorPos ? index - cursorPos : 0;
+        end    = index + cursorPos;
         
-        for( i = start; i < end; i += 1 )
+        for( i = start; i < end; i++ )
         {
-            var height = round( element.height * data[ i ] );
+            var lineHeight = round( elHeight * data[ i ] );
             
-            context.fillRect( ( offset - index ) + i, round( ( element.height - height ) / 2 ), 1, height );
+            context.fillRect( ( cursorPos - index ) + i, round( ( elHeight - lineHeight ) / 2 ), 1, lineHeight );
         }
     }
     
