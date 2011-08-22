@@ -22,7 +22,7 @@ window.requestAnimFrame = ( function()
 ( function()
 {
     
-    var element   = document.getElementById( 'madwave' ),
+    var element   = document.getElementById( 'trackwave' ),
         context   = element.getContext( '2d' ),
         current   = 0;
     
