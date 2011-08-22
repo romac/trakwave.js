@@ -22,25 +22,13 @@ window.requestAnimFrame = ( function()
 ( function()
 {
     
-    var TW = window.TrackWave = function( canvas )
+    var TW = window.TrackWave = function( canvas, data )
     {
         this.canvas  = canvas;
         this.context = canvas.getContext( '2d' );
         this.current = 0;
+        this.data    = data;
     }
-    
-    var data = ( function()
-    {
-        var data = [];
-        
-        for( var i = 0; i < 10000; i++ )
-        {
-            data[ i ] = Math.random( 0, 0.9 );
-        }
-        
-        return data;
-        
-    } )();
     
     /*
      * See:
@@ -77,7 +65,7 @@ window.requestAnimFrame = ( function()
         var elHeight  = this.canvas.height,
             elWidth   = this.canvas.width,
             cursorPos = TW.round( elWidth / 2 ),
-            index     = this.current % ( data.length - cursorPos ),
+            index     = this.current % ( this.data.length - cursorPos ),
             start, end, i;
         
         this.context.fillStyle = '#E2C400';
@@ -97,7 +85,7 @@ window.requestAnimFrame = ( function()
         
         for( i = start; i < end; i++ )
         {
-            var lineHeight = TW.round( elHeight * data[ i ] );
+            var lineHeight = TW.round( elHeight * this.data[ i ] );
             
             this.context.fillRect(
                 ( cursorPos - index ) + i,

@@ -10,7 +10,20 @@
         <script src="src/trackwave.js"></script>
         <script>
         
-        var trackwave = new TrackWave( document.getElementById( 'trackwave' ) );
+        var data = ( function()
+        {
+            var data = [];
+
+            for( var i = 0; i < 10000; i++ )
+            {
+                data[ i ] = Math.random( 0, 0.9 );
+            }
+
+            return data;
+
+        } )();
+        
+        var trackwave = new TrackWave( document.getElementById( 'trackwave' ), data );
             trackwave.draw();
         
         </script>
