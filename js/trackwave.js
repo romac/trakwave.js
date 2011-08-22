@@ -39,9 +39,12 @@ window.requestAnimFrame = ( function()
         
     } )();
     
+    // See:
+    // - http://www.html5rocks.com/en/tutorials/canvas/performance/
+    // - http://jsperf.com/math-round-vs-hack/3
+    // - http://jsperf.com/math-round-vs-bitwise-round-func
     function round( number )
     {
-        return Math.round( number );
         return ( 0.5 + number ) << 0;
     }
     
