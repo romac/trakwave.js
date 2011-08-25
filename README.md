@@ -1,7 +1,6 @@
-
 # trakwave.js
 
-A little JavaScript library which displays a soundwave ala [Traktor](http://www.native-instruments.com/#/en/products/dj/traktor-pro/) inside a `<canvas>` element.
+A little JavaScript library which displays a [Traktor](http://www.native-instruments.com/#/en/products/dj/traktor-pro/)-like soundwave inside a `<canvas>` element.
 
 ## Demo
 
